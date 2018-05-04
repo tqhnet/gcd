@@ -141,6 +141,7 @@
     
     dispatch_async(queue, ^{
         NSLog(@"----1-----%@", [NSThread currentThread]);
+        NSLog(@"当前队列的名字%s",dispatch_queue_get_label(DISPATCH_CURRENT_QUEUE_LABEL));
     });
     dispatch_async(queue, ^{
         NSLog(@"----2-----%@", [NSThread currentThread]);
@@ -166,18 +167,29 @@
 }
 
 //获取线程的名字
+//获取线程的名字
 - (void)test5 {
-    
     //串行队列DISPATCH_QUEUE_SERIAL
-    
     //并行队列
     dispatch_queue_t queue = dispatch_queue_create("a a a",DISPATCH_QUEUE_CONCURRENT);
     dispatch_async(queue, ^{
+        
+        NSLog(@"当前队列的名字%s",dispatch_queue_get_label(DISPATCH_CURRENT_QUEUE_LABEL));
         NSLog(@"1---%@ name = %@",[NSThread currentThread],[[NSThread currentThread]name]);
     });
     dispatch_async(queue, ^{
         NSLog(@"2---%@",[NSThread currentThread]);
     });
+    
+    //参考：https://www.jianshu.com/p/7f68a3d5b07d
+    //strcmp 判断相同的时候在主线程
+    if (strcmp(dispatch_queue_get_label(DISPATCH_CURRENT_QUEUE_LABEL), dispatch_queue_get_label(dispatch_get_main_queue())) == 0) {
+        // do something in main thread
+        
+    } else {
+        // do something in other thread
+        
+    }
 }
 
 @end
